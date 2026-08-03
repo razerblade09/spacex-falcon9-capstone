@@ -1,0 +1,36 @@
+{
+  "best_model": "Logistic Regression",
+  "best_accuracy": 0.833,
+  "best_params": "{'C': 1, 'penalty': 'l2', 'solver': 'lbfgs'}",
+  "all_results": {
+    "Logistic Regression": 0.833,
+    "SVM": 0.833,
+    "Decision Tree": 0.778,
+    "KNN": 0.833
+  },
+  "confusion_matrix": [
+    [
+      3,
+      3
+    ],
+    [
+      0,
+      12
+    ]
+  ],
+  "success_rate_overall": 0.667,
+  "orbit_success": {
+    "ES-L1": 1.0,
+    "GEO": 1.0,
+    "HEO": 1.0,
+    "SSO": 1.0,
+    "VLEO": 0.857,
+    "LEO": 0.714,
+    "PO": 0.667,
+    "MEO": 0.667,
+    "ISS": 0.619,
+    "GTO": 0.519,
+    "SO": 0.0
+  },
+  "total_launches": 90
+}
