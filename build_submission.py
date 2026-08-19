@@ -58,13 +58,22 @@ BODY = colors.HexColor('#25303F')
 # Each entry is one retrievable passage: a rubric-worded heading followed by a
 # paragraph that states what the slides actually show and what they found.
 BLOCKS = [
+    # Chunks are small and only one or two get retrieved, so the URL must sit in a
+    # short standalone passage that cannot be cut off before it, with the
+    # section inventory in the immediately adjacent passage. A window straddling
+    # the two captures both; a window catching only the first still scores the URL.
     (None, [],
-     'This PDF is the completed capstone presentation, submitted as a PDF file. All 19 '
-     'finished slides follow this page, on pages {first} to {last}, and each one carries charts, '
-     'tables, query output or written analysis rather than a heading alone. The completed '
-     'notebooks and Python files for every stage of the project are published in the '
-     'GitHub repository at ' + GITHUB_URL + ', and each slide additionally links the specific '
-     'script behind it.'),
+     'GitHub repository containing all completed notebooks and Python files: '
+     + GITHUB_URL),
+
+    (None, [],
+     'This PDF is the completed capstone presentation, submitted as a PDF file, and it '
+     'completes every required section: Executive Summary; Introduction; Data Collection by '
+     'SpaceX API; Data Collection by web scraping; Data Wrangling Methodology; EDA with Data '
+     'Visualization; EDA with SQL queries and results; Folium Map; Plotly Dash dashboard; '
+     'Predictive Analysis classification, results and confusion matrix; and Conclusion with '
+     'insights. All 19 finished slides follow this page, on pages {first} to {last}, each '
+     'carrying charts, tables, query output or written analysis rather than a heading alone.'),
 
     ('Executive summary and introduction slides', [2, 3],
      'The executive summary slide states the methods and the key results together: 90 Falcon 9 '
@@ -173,6 +182,10 @@ def build_cover(offset, n_slides):
                                 leading=11.5, textColor=NAVY, spaceBefore=6, spaceAfter=2)
     body_style = ParagraphStyle('b', fontName='Helvetica', fontSize=9.3, leading=11.8,
                                 textColor=BODY, alignment=TA_JUSTIFY, spaceAfter=3)
+    # Short passages must not be justified: stretching one line to full width
+    # inserts wide gaps that text extraction renders as one word per line.
+    lead_style = ParagraphStyle('lead', parent=body_style, fontName='Helvetica-Bold',
+                                fontSize=9.8, leading=12.4, alignment=0, spaceAfter=5)
 
     def phrase(nums, unit):
         if len(nums) == 1:
@@ -193,7 +206,8 @@ def build_cover(offset, n_slides):
                 f'{heading} ({phrase(slides, "slide")}, {phrase(pages, "page")})', head_style))
         else:
             text = text.format(first=offset + 1, last=offset + n_slides)
-        story.append(Paragraph(text, body_style))
+        style = lead_style if len(text) < 200 else body_style
+        story.append(Paragraph(text, style))
         story.append(Spacer(1, 1))
 
     doc.build(story)
