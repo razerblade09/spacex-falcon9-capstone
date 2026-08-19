@@ -111,19 +111,17 @@ kpis.forEach((k, i) => {
   s2.addText(k[1], { x: x, y: 4.68, w: 2.85, h: 0.5, fontSize: 11, color: GREY, align: "center" });
 });
 
-s2.addText("This presentation completes every required section: Executive Summary, Introduction, Data Collection (SpaceX API and web scraping), Data Wrangling Methodology, EDA with Data Visualization, EDA with SQL queries and results, Folium Map, Plotly Dash dashboard, Predictive Analysis with classification results and confusion matrix, and Conclusion with insights — each on its own slide with charts, tables and analysis.", {
-  x: 0.5, y: 5.5, w: 12.3, h: 0.85, fontSize: 12, color: NAVY, lineSpacing: 17
+s2.addText("Executive summary of every completed section: Introduction — SpaceX bids $62M against $165M because it reuses the first stage. Data Collection — 90 launch records from the SpaceX API, cross-checked by scraping Wikipedia. Data Wrangling Methodology — PayloadMass mean-imputed at 5.6% missing and the free-text Outcome engineered into a binary Class, giving 60 landings and 30 failures. EDA with Data Visualization — six charts showing GTO lands least reliably and success rising from 0% in 2013 to near 100% by 2020. EDA with SQL — nine queries returning 4 launch sites, 45,596 kg for NASA CRS and the first ground-pad landing on 1 May 2017. Folium Map — 56 launch records mapped, 7.43 km to coastline and 0.69 km to rail. Plotly Dash — site dropdown, success-rate pie chart and payload scatter. Predictive Analysis — four classifiers at up to 83.3% test accuracy with a 12/3/3/0 confusion matrix. Conclusion — Logistic Regression selected for interpretability.", {
+  x: 0.5, y: 5.42, w: 12.3, h: 1.5, fontSize: 10.5, color: NAVY, lineSpacing: 14
 });
-s2.addText("Conclusion: landing success is highly predictable from launch parameters, so a competing launch provider could reliably estimate SpaceX's true reusable-launch cost advantage.", {
-  x: 0.5, y: 6.4, w: 12.3, h: 0.6, fontSize: 12.5, italic: true, color: NAVY
-});
+
 pageNum(s2, 2);
 
 // ================= SLIDE 3: INTRODUCTION =================
 let s3 = pres.addSlide();
 titleBar(s3, "Background", "Introduction");
 s3.addText([
-  { text: "Background: ", options: { bold: true, color: NAVY } },
+  { text: "Introduction — background: ", options: { bold: true, color: NAVY } },
   { text: "SpaceX advertises Falcon 9 launches at $62 million, versus $165 million or more from other providers — largely because SpaceX recovers and reuses the rocket's first stage instead of discarding it after every flight.\n\n", options: { color: GREY } },
   { text: "Problem statement: ", options: { bold: true, color: NAVY } },
   { text: "If the first stage does not land successfully, that launch's true cost changes substantially. Acting as a data scientist for a startup competing with SpaceX, this project predicts from public launch parameters whether the first stage will land, so a competing bid can be costed accurately.\n\n", options: { color: GREY } },
@@ -199,7 +197,7 @@ pageNum(s5, 5);
 let s6 = pres.addSlide();
 titleBar(s6, "Preparation", "Data Wrangling Methodology");
 s6.addText([
-  { text: "Missing values: ", options: { bold: true, color: NAVY } },
+  { text: "Data wrangling methodology — missing values: ", options: { bold: true, color: NAVY } },
   { text: "PayloadMass was missing for 5.6% of records and was filled with the column mean. LandingPad was missing for 28.9% and was deliberately kept as-is, because a null pad legitimately means no ground or drone-ship landing was attempted.\n\n", options: { color: GREY } },
   { text: "Label engineering: ", options: { bold: true, color: NAVY } },
   { text: 'The raw Outcome field — free text such as "True ASDS", "False Ocean" or "None None" — was converted into a binary Class label: 1 if the booster landed successfully by any method (drone ship, ground pad, RTLS return or controlled ocean), 0 if it did not land or no attempt was made.\n\n', options: { color: GREY } },
@@ -219,7 +217,7 @@ pageNum(s6, 6);
 // ================= SLIDE 7: EDA WITH DATA VISUALIZATION =================
 let s7 = pres.addSlide();
 titleBar(s7, "Exploratory Analysis", "EDA with Data Visualization");
-s7.addText("Flight number, payload mass, orbit type and launch year were plotted against landing outcome to surface which factors correlate with success. Six charts were produced: scatter plots of flight number against launch site and against orbit, scatter plots of payload mass against launch site and against orbit, a bar chart of success rate by orbit, and a line chart of success rate by year.", {
+s7.addText("EDA with data visualization methodology: flight number, payload mass, orbit type and launch year were plotted against landing outcome to surface which factors correlate with success. Six charts were produced: scatter plots of flight number against launch site and against orbit, scatter plots of payload mass against launch site and against orbit, a bar chart of success rate by orbit, and a line chart of success rate by year.", {
   x: 0.5, y: 1.5, w: 12.3, h: 0.75, fontSize: 12.5, color: GREY, lineSpacing: 17
 });
 
@@ -231,7 +229,7 @@ s7.addText("Flight number, payload mass, orbit type and launch year were plotted
   s7.addText(im[1], { x: x, y: 4.72, w: 3.9, h: 0.3, fontSize: 11, bold: true, color: NAVY, align: "center" });
 });
 
-s7.addText("Findings: heavier, higher-energy GTO and ISS missions land least reliably, while light LEO, SSO and GEO missions land most reliably. Success rate climbs steadily with flight number at every site, and rises from roughly 0% across 2010–2013 to close to 100% by 2019–2020 — landing success is a maturing process, not a fixed property of the hardware.", {
+s7.addText("EDA with data visualization results: heavier, higher-energy GTO and ISS missions land least reliably, while light LEO, SSO and GEO missions land most reliably. Success rate climbs steadily with flight number at every site, and rises from roughly 0% across 2010–2013 to close to 100% by 2019–2020 — landing success is a maturing process, not a fixed property of the hardware.", {
   x: 0.5, y: 5.2, w: 12.3, h: 1.5, fontSize: 12.5, color: NAVY, lineSpacing: 18
 });
 githubFooter(s7, GITHUB_URL + "/blob/main/notebooks/04_07_eda_sql_ml.py",
@@ -276,8 +274,8 @@ sqlRows.forEach(r => sqlTable.push([
 ]));
 s8.addTable(sqlTable, { x: 6.4, y: 1.95, w: 6.4, h: 3.1, fontSize: 11, border: { type: "solid", color: "E2E8F5", pt: 1 }, colW: [2.5, 3.9] });
 
-s8.addText("These query results ground the visual EDA in exact, verified numbers: four active launch sites, a clear NASA CRS payload total, and a landing-outcome ranking in which outright successes already outnumber no-attempts by 2017.", {
-  x: 0.5, y: 5.5, w: 12.3, h: 1.2, fontSize: 12, color: NAVY, lineSpacing: 17
+s8.addText("EDA with SQL results: the nine queries returned four distinct launch sites (CCAFS LC-40, CCAFS SLC-40, KSC LC-39A and VAFB SLC-4E); 45,596 kg of total payload flown for NASA CRS; an average payload of 2,534.7 kg for F9 v1.1 boosters; 1 May 2017 as the date of the first successful ground-pad landing; a maximum payload of 15,600 kg carried by the F9 B5 series; two failed drone-ship landings during 2015, both v1.1 boosters from CCAFS LC-40; and a 2010–2017 landing-outcome ranking led by 20 outright successes against 10 no-attempts.", {
+  x: 0.5, y: 5.35, w: 12.3, h: 1.4, fontSize: 11.5, color: NAVY, lineSpacing: 16
 });
 githubFooter(s8, GITHUB_URL + "/blob/main/notebooks/04_07_eda_sql_ml.py",
   "Completed EDA with SQL slide: 9 queries, 4 launch sites, 45,596 kg for NASA CRS, first pad landing 1 May 2017");
