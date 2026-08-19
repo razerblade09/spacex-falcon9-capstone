@@ -11,8 +11,9 @@ Logistic Regression reached 83.3% test accuracy.
 
 | File | Description |
 | --- | --- |
-| [Data Science Capstone Project Report.pdf](Data%20Science%20Capstone%20Project%20Report.pdf) | **The graded submission** — one-page summary sheet plus all 19 slides (20 pages) |
-| [Data_Science_Capstone_Presentation.pdf](Data_Science_Capstone_Presentation.pdf) | 19-slide presentation on its own |
+| [Data Science Capstone Project Report.pdf](Data%20Science%20Capstone%20Project%20Report.pdf) | **The graded submission** — the 12-slide deck (12 pages) |
+| [Data_Science_Capstone_Presentation_12.pptx](Data_Science_Capstone_Presentation_12.pptx) | Editable source of the 12-slide submission deck |
+| [Data_Science_Capstone_Presentation.pdf](Data_Science_Capstone_Presentation.pdf) | Longer 19-slide presentation, easier for a human to read |
 | [Data_Science_Capstone_Presentation.pptx](Data_Science_Capstone_Presentation.pptx) | Editable source of the presentation |
 | [Data_Science_Capstone_Project_Report.pdf](Data_Science_Capstone_Project_Report.pdf) | Written project report on its own |
 | [Data_Science_Capstone_Project_Report.docx](Data_Science_Capstone_Project_Report.docx) | Editable source of the report |
@@ -39,8 +40,9 @@ Logistic Regression reached 83.3% test accuracy.
 - `data/` — source and derived datasets, plus `ml_summary.json` with model results
 - `images/` — chart, map, and dashboard renders used in the report and slides
 - Map renders use OpenStreetMap tiles and require network access; basemaps © OpenStreetMap contributors
-- `build_pptx.js` / `build_docx.js` — scripts that generate the presentation and report
-- `build_submission.py` — assembles the graded single-PDF submission (summary sheet + slides)
+- `build_pptx12.js` — generates the 12-slide submission deck (one slide per rubric section)
+- `build_pptx.js` / `build_docx.js` — generate the longer 19-slide deck and the written report
+
 
 ## Results summary
 
