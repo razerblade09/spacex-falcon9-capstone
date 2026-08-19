@@ -3,7 +3,11 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-dash_df = pd.read_csv('/home/claude/capstone/data/spacex_launch_dash.csv')
+import os
+# Repo root, resolved relative to this file so the script runs from any checkout.
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+dash_df = pd.read_csv(f'{ROOT}/data/spacex_launch_dash.csv')
 dash_df.columns = dash_df.columns.str.strip()
 print(dash_df.columns.tolist())
 
@@ -15,7 +19,7 @@ ax.pie(site_success.values, labels=site_success.index, autopct='%1.1f%%',
        colors=colors, startangle=90, textprops={'fontsize': 11, 'fontweight': 'bold'})
 ax.set_title('Total Successful Launches by Site', fontsize=14, fontweight='bold')
 plt.tight_layout()
-plt.savefig('/home/claude/capstone/images/dash_pie_all_sites.png', dpi=150)
+plt.savefig(f'{ROOT}/images/dash_pie_all_sites.png', dpi=150)
 plt.close()
 
 # --- Pie chart: success vs failure for the top site ---
@@ -27,7 +31,7 @@ ax.pie(counts.values, labels=['Failure', 'Success'], autopct='%1.1f%%',
        colors=['#E4572E', '#17BEBB'], startangle=90, textprops={'fontsize': 12, 'fontweight': 'bold'})
 ax.set_title(f'Success vs Failure - {top_site}', fontsize=14, fontweight='bold')
 plt.tight_layout()
-plt.savefig('/home/claude/capstone/images/dash_pie_top_site.png', dpi=150)
+plt.savefig(f'{ROOT}/images/dash_pie_top_site.png', dpi=150)
 plt.close()
 
 # --- Scatter: Payload vs Outcome, colored by booster version category ---
@@ -43,7 +47,7 @@ ax.set_xlabel('Payload Mass (kg)')
 ax.set_title('Payload Mass vs Launch Outcome by Booster Version', fontsize=13, fontweight='bold')
 ax.legend(title='Booster Version', bbox_to_anchor=(1.02, 1), loc='upper left')
 plt.tight_layout()
-plt.savefig('/home/claude/capstone/images/dash_payload_scatter.png', dpi=150)
+plt.savefig(f'{ROOT}/images/dash_payload_scatter.png', dpi=150)
 plt.close()
 
 print("Dash-style charts saved: dash_pie_all_sites.png, dash_pie_top_site.png, dash_payload_scatter.png")

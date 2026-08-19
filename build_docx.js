@@ -1,9 +1,14 @@
 const { Document, Packer, Paragraph, TextRun, HeadingLevel, ImageRun, Table, TableRow, TableCell,
         WidthType, ShadingType, AlignmentType, BorderStyle, PageBreak, ExternalHyperlink } = require("docx");
 const fs = require("fs");
+const path = require("path");
+const { imageSize } = require("image-size");
 
-const IMG = "/home/claude/capstone/images/";
-const GITHUB_URL = "https://github.com/YOUR-USERNAME/spacex-falcon9-capstone"; // <-- replace after you push your repo
+// Repo root, so the build runs from any checkout.
+const ROOT = __dirname;
+
+const IMG = path.join(ROOT, "images") + path.sep;
+const GITHUB_URL = "https://github.com/razerblade09/spacex-falcon9-capstone";
 const NAVY = "0B1F3A";
 const BLUE = "3B60E4";
 const GREY = "444444";
@@ -34,11 +39,12 @@ function githubLink(url) {
 }
 function img(filename, width = 550) {
   const data = fs.readFileSync(IMG + filename);
-  // maintain rough aspect ratio; charts are ~ 9x5.5 or similar
+  // Scale to the image's own aspect ratio so nothing is stretched.
+  const { width: pxW, height: pxH } = imageSize(data);
   return new Paragraph({
     alignment: AlignmentType.CENTER,
     spacing: { after: 200 },
-    children: [ new ImageRun({ data, transformation: { width: width, height: Math.round(width * 0.62) }, type: "png" }) ]
+    children: [ new ImageRun({ data, transformation: { width: width, height: Math.round(width * pxH / pxW) }, type: "png" }) ]
   });
 }
 function caption(text) {
@@ -66,7 +72,7 @@ children.push(
   new Paragraph({ text: "", spacing: { after: 1600 } }),
   new Paragraph({ alignment: AlignmentType.CENTER, children: [ new TextRun({ text: "Data Science Capstone Project Report", bold: true, size: 44, color: NAVY }) ], spacing: { after: 200 } }),
   new Paragraph({ alignment: AlignmentType.CENTER, children: [ new TextRun({ text: "SpaceX Falcon 9 First-Stage Landing Prediction", size: 28, color: BLUE }) ], spacing: { after: 800 } }),
-  new Paragraph({ alignment: AlignmentType.CENTER, children: [ new TextRun({ text: "Prepared by: [Your Name]", size: 22 }) ] }),
+  new Paragraph({ alignment: AlignmentType.CENTER, children: [ new TextRun({ text: "Prepared by: Aaron Vargas", size: 22 }) ] }),
   new Paragraph({ alignment: AlignmentType.CENTER, children: [ new TextRun({ text: "IBM Applied Data Science Capstone", size: 22 }) ] }),
   new Paragraph({ alignment: AlignmentType.CENTER, children: [ new TextRun({ text: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }), size: 22 }) ] }),
   new Paragraph({ children: [ new PageBreak() ] })
@@ -175,17 +181,34 @@ children.push(githubLink(GITHUB_URL + "/blob/main/notebooks/04_07_eda_sql_ml.py"
 // ---------------- INTERACTIVE VISUAL ANALYTICS ----------------
 children.push(h1("Interactive Visual Analytics"));
 children.push(h2("Folium Map"));
-children.push(p("An interactive Folium map plots all 4 launch sites and every individual launch (55 geocoded records), colored green for a successful landing and red for a failed/no-attempt landing. A proximity analysis was also computed: using the haversine formula, the distance from KSC LC-39A to the nearest coastline point is 7.43 km, and to the nearest city (Titusville area) is 20.50 km — consistent with real launch-site safety requirements (close to open water for downrange safety, a safe distance from population centers)."));
+children.push(p("An interactive Folium map plots all 4 launch sites and every individual launch (56 geocoded records), colored green for a successful landing and red for a failed/no-attempt landing."));
 children.push(img("folium_static_view.png"));
-children.push(caption("Figure 7. Static rendering of the interactive Folium map (launch sites and per-launch outcomes)."));
+children.push(caption("Figure 7. Static rendering of the interactive Folium map: all 4 launch sites with every launch record plotted and colored by landing outcome."));
+
+children.push(h2("Proximity Analysis"));
+children.push(p("Distances from KSC LC-39A to the nearest surrounding features were computed with the haversine formula. The coastline point was read off the map; the city, railway, and highway coordinates were taken from OpenStreetMap as the nearest place=city node and the nearest node of a way tagged railway=rail and highway=secondary respectively."));
+children.push(simpleTable(
+  ["Feature", "Nearest instance", "Distance from KSC LC-39A"],
+  [
+    ["Coastline", "Atlantic shoreline (east of pad)", "7.43 km"],
+    ["City", "Titusville, FL", "16.33 km"],
+    ["Railway", "NASA Railroad", "0.69 km"],
+    ["Highway", "Kennedy Parkway North", "0.85 km"],
+  ],
+  [1800, 4200, 3000]
+));
+children.push(new Paragraph({ text: "", spacing: { after: 200 } }));
+children.push(img("folium_map_screenshot.png"));
+children.push(caption("Figure 8. Proximity analysis — distance lines from KSC LC-39A to the nearest coastline, city, railway, and highway."));
+children.push(p("The pattern matches real launch-site siting constraints: the pad sits close to open water for downrange safety and within a kilometre of both rail and road links, since boosters and stages arrive overland, yet is kept well clear of the nearest population centre."));
 children.push(githubLink(GITHUB_URL + "/blob/main/notebooks/06_folium_map.py"));
 
 children.push(h2("Plotly Dash App"));
 children.push(p("A Plotly Dash dashboard (dashboard/app.py) provides a dropdown to filter by launch site, a live-updating pie chart of success rate, and a payload-vs-outcome scatter plot filterable by a payload-mass range slider."));
 children.push(img("dash_pie_all_sites.png", 400));
-children.push(caption("Figure 8. Share of total successful landings contributed by each launch site."));
+children.push(caption("Figure 9. Share of total successful landings contributed by each launch site."));
 children.push(img("dash_payload_scatter.png"));
-children.push(caption("Figure 9. Payload mass vs. launch outcome, colored by booster version category."));
+children.push(caption("Figure 10. Payload mass vs. launch outcome, colored by booster version category."));
 children.push(p("Newer booster generations (FT, B4, B5) succeed reliably across a much wider payload range than early versions (v1.0, v1.1) — visual confirmation that booster maturity, not just payload mass alone, drives landing success."));
 children.push(githubLink(GITHUB_URL + "/blob/main/dashboard/app.py"));
 
@@ -208,9 +231,9 @@ children.push(simpleTable(
 ));
 children.push(new Paragraph({ text: "", spacing: { after: 200 } }));
 children.push(img("model_comparison.png", 450));
-children.push(caption("Figure 10. Test accuracy comparison across all four models."));
+children.push(caption("Figure 11. Test accuracy comparison across all four models."));
 children.push(img("confusion_matrix_best.png", 350));
-children.push(caption("Figure 11. Confusion matrix for the best model (Logistic Regression)."));
+children.push(caption("Figure 12. Confusion matrix for the best model (Logistic Regression)."));
 children.push(p("Reading the confusion matrix (18 test launches): 12 successful landings correctly predicted, 3 unsuccessful landings correctly predicted, 3 unsuccessful landings misclassified as successful, and 0 successful landings missed. The model never misses a true landing, which is the more conservative error direction for cost estimation."));
 
 children.push(h2("Best Model"));
@@ -237,6 +260,6 @@ const doc = new Document({
 });
 
 Packer.toBuffer(doc).then(buf => {
-  fs.writeFileSync("/home/claude/capstone/Data_Science_Capstone_Project_Report.docx", buf);
+  fs.writeFileSync(path.join(ROOT, "Data_Science_Capstone_Project_Report.docx"), buf);
   console.log("Report saved.");
 });

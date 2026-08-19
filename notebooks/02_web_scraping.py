@@ -16,6 +16,10 @@ from bs4 import BeautifulSoup
 import re
 import unicodedata
 
+import os
+# Repo root, resolved relative to this file so the script runs from any checkout.
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 static_url = "https://en.wikipedia.org/w/index.php?title=List_of_Falcon_9_and_Falcon_Heavy_launches&oldid=1027686922"
 
 
@@ -124,5 +128,5 @@ for table_number, table in enumerate(soup.find_all('table', "wikitable plainrowh
 
 df = pd.DataFrame({k: pd.Series(v) for k, v in launch_dict.items()})
 print("\nScraped shape:", df.shape)
-df.to_csv('/home/claude/capstone/data/spacex_web_scraped.csv', index=False)
+df.to_csv(f'{ROOT}/data/spacex_web_scraped.csv', index=False)
 print("Saved to data/spacex_web_scraped.csv")

@@ -4,15 +4,19 @@ Phase 6: Interactive Visual Analytics - Folium Map
 Builds an interactive map showing:
   1. All 4 launch site locations as markers
   2. Individual launch records at each site, colored green (success) / red (failure)
-  3. Distance lines from a launch site to nearby coastline / city / railway
-     (proximity analysis)
+  3. Distance lines from the launch site to the nearest coastline, city,
+     railway, and highway (proximity analysis)
 """
 import pandas as pd
 import folium
 from folium.plugins import MarkerCluster
 from math import sin, cos, sqrt, atan2, radians
 
-geo = pd.read_csv('/home/claude/capstone/data/spacex_launch_geo.csv')
+import os
+# Repo root, resolved relative to this file so the script runs from any checkout.
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+geo = pd.read_csv(f'{ROOT}/data/spacex_launch_geo.csv')
 geo.columns = geo.columns.str.strip()
 print(geo.columns.tolist())
 print(geo.shape)
@@ -45,8 +49,9 @@ for _, row in geo.iterrows():
         icon=folium.Icon(color='white', icon_color=color)
     ).add_to(marker_cluster)
 
-# --- 3. Proximity analysis: distance from KSC LC-39A to nearest coastline point ---
+# --- 3. Proximity analysis: distance from KSC LC-39A to nearby features ---
 def calculate_distance(lat1, lon1, lat2, lon2):
+    """Haversine great-circle distance in km."""
     R = 6373.0
     lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
     dlon = lon2 - lon1
@@ -56,19 +61,29 @@ def calculate_distance(lat1, lon1, lat2, lon2):
     return R * c
 
 launch_site_lat, launch_site_lon = 28.573255, -80.646895  # KSC LC-39A
-coastline_lat, coastline_lon = 28.56367, -80.57163         # nearest coastline point
-city_lat, city_lon = 28.3922, -80.6077                      # Titusville / nearby city
 
-d_coast = calculate_distance(launch_site_lat, launch_site_lon, coastline_lat, coastline_lon)
-d_city = calculate_distance(launch_site_lat, launch_site_lon, city_lat, city_lon)
+# Nearest-feature coordinates. The coastline point was read off the map; the
+# city, railway and highway points come from OpenStreetMap (Overpass API) as
+# the closest place=city node (Titusville) and the closest node of a way
+# tagged railway=rail (NASA Railroad) and highway=secondary (Kennedy Parkway
+# North), searched within 25-40 km of the launch site.
+PROXIMITY = [
+    ('coastline', 28.56367, -80.57163, 'coastline'),
+    ('city',      28.61262, -80.80795, 'Titusville'),
+    ('railway',   28.57295, -80.65392, 'NASA Railroad'),
+    ('highway',   28.57195, -80.65542, 'Kennedy Pkwy N'),
+]
 
-for (lat, lon, dist, label) in [
-    (coastline_lat, coastline_lon, d_coast, f'{d_coast:.2f} KM'),
-    (city_lat, city_lon, d_city, f'{d_city:.2f} KM to city')
-]:
+distances = {
+    key: calculate_distance(launch_site_lat, launch_site_lon, lat, lon)
+    for key, lat, lon, _ in PROXIMITY
+}
+
+for (key, lat, lon, name) in PROXIMITY:
+    label = f'{distances[key]:.2f} KM to {name}'
     folium.Marker(
         [lat, lon],
-        icon=folium.DivIcon(icon_size=(200, 36), icon_anchor=(0, 0),
+        icon=folium.DivIcon(icon_size=(220, 36), icon_anchor=(0, 0),
                              html=f'<div style="font-size:11px;color:#d62728;font-weight:bold">{label}</div>')
     ).add_to(site_map)
     folium.PolyLine(
@@ -76,7 +91,9 @@ for (lat, lon, dist, label) in [
         weight=2, color='#d62728'
     ).add_to(site_map)
 
-site_map.save('/home/claude/capstone/images/launch_site_map.html')
-print(f"\nDistance KSC LC-39A -> coastline: {d_coast:.2f} km")
-print(f"Distance KSC LC-39A -> city: {d_city:.2f} km")
+site_map.save(f'{ROOT}/images/launch_site_map.html')
+print()
+print("Proximity analysis - distances from KSC LC-39A:")
+for key, lat, lon, name in PROXIMITY:
+    print(f"  {name:<16} {distances[key]:>8.2f} km")
 print("Map saved to images/launch_site_map.html")

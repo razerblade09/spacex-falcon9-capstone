@@ -12,7 +12,11 @@ This is the label our ML models will predict in Phase 7.
 import pandas as pd
 import numpy as np
 
-df = pd.read_csv('/home/claude/capstone/data/dataset_part_1.csv')
+import os
+# Repo root, resolved relative to this file so the script runs from any checkout.
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+df = pd.read_csv(f'{ROOT}/data/dataset_part_1.csv')
 print("Loaded:", df.shape)
 
 # ---------------------------------------------------------------
@@ -50,5 +54,5 @@ print("\nClass balance:")
 print(df['Class'].value_counts())
 print(f"Success rate: {df['Class'].mean()*100:.1f}%")
 
-df.to_csv('/home/claude/capstone/data/dataset_part_2_wrangled.csv', index=False)
+df.to_csv(f'{ROOT}/data/dataset_part_2_wrangled.csv', index=False)
 print("\nSaved to data/dataset_part_2_wrangled.csv")

@@ -14,6 +14,10 @@ import numpy as np
 import datetime
 import json
 
+import os
+# Repo root, resolved relative to this file so the script runs from any checkout.
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 pd.set_option('display.max_columns', None)
 
 # ---------------------------------------------------------------
@@ -136,5 +140,5 @@ df['FlightNumber'] = list(range(1, df.shape[0] + 1))
 print("\nFinal API dataframe shape:", df.shape)
 print(df.head())
 
-df.to_csv('/home/claude/capstone/data/spacex_api_raw.csv', index=False)
+df.to_csv(f'{ROOT}/data/spacex_api_raw.csv', index=False)
 print("\nSaved to data/spacex_api_raw.csv")

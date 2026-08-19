@@ -1,8 +1,11 @@
 const pptxgen = require("pptxgenjs");
 const path = require("path");
 
-const IMG = "/home/claude/capstone/images/";
-const GITHUB_URL = "https://github.com/YOUR-USERNAME/spacex-falcon9-capstone"; // <-- replace after you push your repo
+// Repo root, so the build runs from any checkout.
+const ROOT = __dirname;
+
+const IMG = path.join(ROOT, "images") + path.sep;
+const GITHUB_URL = "https://github.com/razerblade09/spacex-falcon9-capstone";
 
 const NAVY = "0B1F3A";
 const BLUE = "3B60E4";
@@ -42,7 +45,7 @@ s1.addText("SpaceX Falcon 9\nFirst-Stage Landing Prediction", {
 s1.addText("Data Science Capstone Project Report", {
   x: 0.8, y: 4.1, w: 11, h: 0.5, fontSize: 20, color: TEAL
 });
-s1.addText("Presented by: [Your Name]   |   " + new Date().toISOString().slice(0,10), {
+s1.addText("Presented by: Aaron Vargas   |   " + new Date().toISOString().slice(0,10), {
   x: 0.8, y: 6.6, w: 11, h: 0.4, fontSize: 13, color: "AAB4C8"
 });
 s1.addShape(pres.ShapeType.rect, { x: 0.8, y: 4.75, w: 2.2, h: 0.06, fill: { color: BLUE } });
@@ -270,8 +273,8 @@ s12.addText("Two interactive tools let stakeholders explore the data themselves 
 
 s12.addShape(pres.ShapeType.roundRect, { x: 0.5, y: 2.3, w: 5.9, h: 3.6, fill: { color: LIGHT }, rectRadius: 0.1 });
 s12.addText("Folium Map", { x: 0.8, y: 2.5, w: 5.3, h: 0.5, fontSize: 17, bold: true, color: BLUE });
-s12.addText("Launch-site markers, per-launch outcome markers (color-coded), and proximity distance lines (coastline, city, rail).", { x: 0.8, y: 3.05, w: 5.3, h: 1.0, fontSize: 12.5, color: GREY, lineSpacing: 18 });
-s12.addImage({ path: IMG + "folium_static_view.png", x: 0.8, y: 4.1, w: 5.3, h: 1.65 });
+s12.addText("Launch-site markers, per-launch outcome markers (color-coded), and proximity distance lines (coastline, city, railway, highway).", { x: 0.8, y: 3.05, w: 5.3, h: 1.0, fontSize: 12.5, color: GREY, lineSpacing: 18 });
+s12.addImage({ path: IMG + "folium_static_view.png", x: 1.38, y: 4.1, w: 4.15, h: 1.8 });
 
 s12.addShape(pres.ShapeType.roundRect, { x: 6.9, y: 2.3, w: 5.9, h: 3.6, fill: { color: LIGHT }, rectRadius: 0.1 });
 s12.addText("Plotly Dash App", { x: 7.2, y: 2.5, w: 5.3, h: 0.5, fontSize: 17, bold: true, color: TEAL });
@@ -284,13 +287,13 @@ pageNum(s12, 12);
 // ================= SLIDE 13: FOLIUM MAP - site markers/records =================
 let s13 = pres.addSlide();
 titleBar(s13, "Interactive Visual Analytics · Folium", "Launch Site Markers & Launch Records");
-s13.addImage({ path: IMG + "folium_static_view.png", x: 0.5, y: 1.6, w: 7.6, h: 5.1 });
+s13.addImage({ path: IMG + "folium_static_view.png", x: 0.5, y: 2.3, w: 8.6, h: 3.73 });
 s13.addText([
   { text: "All 4 launch sites plotted with markers.\n", options: { bold: true, color: NAVY } },
-  { text: "Every individual launch (55 records) plotted as a marker cluster, colored green for a successful landing and red for a failed/no-attempt landing — letting you see which sites cluster more successes.\n\n", options: { color: GREY } },
+  { text: "Every individual launch (56 records) plotted as a marker cluster, colored green for a successful landing and red for a failed/no-attempt landing — letting you see which sites cluster more successes.\n\n", options: { color: GREY } },
   { text: "Observation: ", options: { bold: true, color: NAVY } },
-  { text: "KSC LC-39A and CCAFS SLC-40 show visibly denser green clusters than VAFB SLC-4E, consistent with their higher launch-cadence, more-refined-process profile.", options: { color: GREY } },
-], { x: 8.3, y: 1.7, w: 4.5, h: 4.9, fontSize: 12.5, lineSpacing: 19 });
+  { text: "KSC LC-39A shows the densest green cluster — 10 landings from 13 launches (77%). CCAFS LC-40, the earliest and highest-volume pad, landed only 7 of 26 (27%): most of its records predate a working recovery process.", options: { color: GREY } },
+], { x: 9.3, y: 1.7, w: 3.5, h: 4.9, fontSize: 12, lineSpacing: 18 });
 githubFooter(s13, GITHUB_URL + "/blob/main/notebooks/06_folium_map.py");
 pageNum(s13, 13);
 
@@ -299,17 +302,23 @@ let s14 = pres.addSlide();
 titleBar(s14, "Interactive Visual Analytics · Folium", "Proximity Analysis");
 s14.addText("Using the haversine formula, we measured distance from KSC LC-39A to nearby geographic features:", { x: 0.5, y: 1.6, w: 12.3, h: 0.5, fontSize: 14, color: GREY });
 
-const proxRows = [["Nearest coastline point", "7.43 km"], ["Nearest city (Titusville area)", "20.50 km"]];
+const proxRows = [
+  ["Nearest coastline point", "7.43 km"],
+  ["Nearest city (Titusville)", "16.33 km"],
+  ["Nearest railway (NASA Railroad)", "0.69 km"],
+  ["Nearest highway (Kennedy Pkwy N)", "0.85 km"],
+];
 let proxTable = [[{text:"Feature", options:{bold:true, color:"FFFFFF", fill:{color:ORANGE}}}, {text:"Distance from Launch Site", options:{bold:true, color:"FFFFFF", fill:{color:ORANGE}}}]];
 proxRows.forEach(r => proxTable.push([{text:r[0], options:{color:NAVY}}, {text:r[1], options:{color:NAVY, align:"center"}}]));
-s14.addTable(proxTable, { x: 0.5, y: 2.3, w: 6.0, h: 1.3, fontSize: 13, border: { type: "solid", color: "E2E8F5", pt: 1 }, colW: [4.2, 1.8] });
+s14.addTable(proxTable, { x: 0.5, y: 2.25, w: 6.0, h: 1.9, fontSize: 12.5, border: { type: "solid", color: "E2E8F5", pt: 1 }, colW: [4.2, 1.8] });
 
 s14.addText([
   { text: "Why this matters: ", options: { bold: true, color: NAVY } },
-  { text: "Launch sites are deliberately sited close to coastlines (for downrange safety over open water) but a safe distance from population centers and rail lines — a real siting constraint any competing launch provider would need to replicate.", options: { color: GREY } }
-], { x: 0.5, y: 3.9, w: 6.0, h: 2.5, fontSize: 13, lineSpacing: 20 });
+  { text: "Launch sites are deliberately sited close to coastlines (for downrange safety over open water) and to rail and road links (boosters and stages arrive overland), but a safe distance from population centers — real siting constraints any competing launch provider would need to replicate.", options: { color: GREY } }
+], { x: 0.5, y: 4.35, w: 6.0, h: 2.2, fontSize: 12.5, lineSpacing: 19 });
 
-s14.addImage({ path: IMG + "folium_static_view.png", x: 6.9, y: 1.6, w: 5.9, h: 4.9 });
+s14.addImage({ path: IMG + "folium_map_screenshot.png", x: 7.25, y: 2.2, w: 5.2, h: 4.5 });
+s14.addText("City, railway and highway coordinates sourced from OpenStreetMap.", { x: 0.5, y: 6.15, w: 6.0, h: 0.4, fontSize: 10.5, color: GREY, italic: true });
 githubFooter(s14, GITHUB_URL + "/blob/main/notebooks/06_folium_map.py");
 pageNum(s14, 14);
 
@@ -399,6 +408,6 @@ conclusions.forEach((c, i) => s19.addText(c, { x: 6.9, y: 2.1 + i*1.1, w: 5.9, h
 githubFooter(s19, GITHUB_URL);
 pageNum(s19, 19);
 
-pres.writeFile({ fileName: "/home/claude/capstone/Data_Science_Capstone_Presentation.pptx" }).then(() => {
+pres.writeFile({ fileName: path.join(ROOT, "Data_Science_Capstone_Presentation.pptx") }).then(() => {
   console.log("Presentation saved.");
 });

@@ -13,8 +13,8 @@ import warnings
 warnings.filterwarnings('ignore')
 
 sns.set_style('whitegrid')
-IMG = '/home/claude/capstone/images/'
-DATA = '/home/claude/capstone/data/'
+IMG = f'{ROOT}/images/'
+DATA = f'{ROOT}/data/'
 
 df = pd.read_csv(DATA + 'dataset_part_2.csv')
 print("Loaded dataset_part_2:", df.shape)
@@ -212,6 +212,10 @@ print("\nML charts saved: confusion_matrix_best.png, model_comparison.png")
 
 # Save summary for report generation
 import json
+
+import os
+# Repo root, resolved relative to this file so the script runs from any checkout.
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 summary = {
     'best_model': best_name,
     'best_accuracy': round(best_acc, 3),
@@ -222,6 +226,6 @@ summary = {
     'orbit_success': orbit_success.round(3).to_dict(),
     'total_launches': len(df)
 }
-with open('/home/claude/capstone/data/ml_summary.json', 'w') as f:
+with open(f'{ROOT}/data/ml_summary.json', 'w') as f:
     json.dump(summary, f, indent=2)
 print("\nSaved ml_summary.json")
