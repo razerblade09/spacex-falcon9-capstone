@@ -45,6 +45,10 @@ s1.addText("SpaceX Falcon 9\nFirst-Stage Landing Prediction", {
 s1.addText("Data Science Capstone Project Report", {
   x: 0.8, y: 4.1, w: 11, h: 0.5, fontSize: 20, color: TEAL
 });
+s1.addText([
+  { text: "GitHub repository (all notebooks and Python files): ", options: { color: "AAB4C8" } },
+  { text: GITHUB_URL, options: { color: TEAL, hyperlink: { url: GITHUB_URL } } }
+], { x: 0.8, y: 5.15, w: 11.7, h: 0.4, fontSize: 14 });
 s1.addText("Presented by: Aaron Vargas   |   " + new Date().toISOString().slice(0,10), {
   x: 0.8, y: 6.6, w: 11, h: 0.4, fontSize: 13, color: "AAB4C8"
 });

@@ -81,7 +81,7 @@ children.push(
 // ---------------- 1.1/1.2 LINKS ----------------
 children.push(h1("Project Links"));
 children.push(githubLink(GITHUB_URL));
-children.push(p("Presentation slides (PDF): Data_Science_Capstone_Presentation.pdf (submitted alongside this report)."));
+children.push(p("Presentation slides: the complete 19-slide presentation is included in this same PDF, immediately before this report."));
 
 // ---------------- EXECUTIVE SUMMARY ----------------
 children.push(h1("Executive Summary"));
